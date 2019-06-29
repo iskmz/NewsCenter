@@ -1,6 +1,6 @@
 <LinearLayout
         android:layout_height="match_parent"
-        android:layout_width="match_parent"
+        android:layout_width="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
         android:orientation="vertical"
         android:background="#000000"
         android:layoutDirection="ltr"
@@ -21,7 +21,20 @@
 
         <WebView
                 android:id="@+id/webView"
+                android:visibility="gone"
                 android:layout_width="match_parent" android:layout_height="match_parent"
+        />
+
+        <com.wang.avi.AVLoadingIndicatorView
+                android:id="@+id/aviProgress"
+                android:visibility="visible"
+                android:layout_gravity="center"
+                android:layout_marginTop="200dp"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                style="@style/AVLoadingIndicatorView.Large"
+                app:indicatorName="BallTrianglePathIndicator"
+                app:indicatorColor="#FF4003"
         />
 
 

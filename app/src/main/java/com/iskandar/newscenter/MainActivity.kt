@@ -14,7 +14,6 @@ import android.support.v7.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.LAYOUT_DIRECTION_LTR
 import android.view.ViewGroup
 import android.widget.Toast
 import kotlinx.android.synthetic.main.action_bar_title.view.*
@@ -25,6 +24,7 @@ import android.os.StrictMode
 import android.webkit.WebViewClient
 import android.graphics.Rect
 import android.support.v7.app.AlertDialog
+import android.view.View.*
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
@@ -70,6 +70,16 @@ class MainActivity : AppCompatActivity() {
 
             webViewClient = object : WebViewClient() {
                 override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?) = false
+
+                override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                    webView.visibility = GONE
+                    aviProgress.smoothToShow()
+                }
+
+                override fun onPageFinished(view: WebView?, url: String?) {
+                    webView.visibility = VISIBLE
+                    aviProgress.smoothToHide()
+                }
             }
 
             loadUrl(newsList[0].url)
