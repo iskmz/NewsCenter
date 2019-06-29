@@ -10,9 +10,14 @@ import android.support.v7.widget.LinearLayoutManager
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_main.*
 import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View.LAYOUT_DIRECTION_LTR
+import android.view.View.TEXT_DIRECTION_LTR
+import android.widget.ImageView
 import android.widget.RelativeLayout
-
-
+import android.widget.Toast
+import kotlinx.android.synthetic.main.action_bar_title.*
+import kotlinx.android.synthetic.main.action_bar_title.view.*
 
 
 data class SiteItem(val title:String, val url:String)
@@ -34,29 +39,43 @@ class MainActivity : AppCompatActivity() {
         newsList = loadSitesList()
         rvNewsSites.layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
 
+
         init_ActionBar()
 
     }
 
     private fun init_ActionBar() {
-        val bar = actionBar
-        actionBar!!.setBackgroundDrawable(ColorDrawable(Color.BLACK))
-        val textview = TextView(this@MainActivity)
-        textview.text = getString(R.string.app_name)
-        textview.gravity = Gravity.CENTER
-        textview.setTextColor(Color.parseColor("#00ff00"))
-        textview.textSize = 22f
-        actionBar!!.setDisplayShowCustomEnabled(true)
-        actionBar!!.customView = textview
+
+        // to FORCE LTR for action bar also !
+        window.decorView.layoutDirection = LAYOUT_DIRECTION_LTR
+
+        supportActionBar?.run {
+            setBackgroundDrawable(ColorDrawable(Color.BLACK))
+            val v = LayoutInflater.from(this@MainActivity).inflate(R.layout.action_bar_title,null)
+            title = ""
+            setDisplayShowCustomEnabled(true)
+            v.setOnClickListener{
+                showAboutDialog()
+            }
+            v.btnCancel.setOnClickListener{
+                finish()
+            }
+            customView = v
+        }
+    }
+
+    private fun showAboutDialog() {
+        // for check
+        Toast.makeText(this@MainActivity,"Hello There !",Toast.LENGTH_LONG).show()
     }
 
     private fun loadSitesList(): List<SiteItem> {
 
         val defaultList = getDefaultList()
 
+        return defaultList
 
 
-        TODO()
         // first check shared preferences DEFAULT flag (custom made value!)
         // if DEFAULT flag exists , then load the above default list
         // else load shared preferences data !
