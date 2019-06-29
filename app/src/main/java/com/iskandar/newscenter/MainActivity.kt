@@ -34,10 +34,10 @@ import kotlinx.android.synthetic.main.item_other.view.*
 
 data class SiteItem(val title:String, val url:String, val favIconURL:String)
 lateinit var newsList:List<SiteItem>
-lateinit var context:Context
 
 class MainActivity : AppCompatActivity() {
 
+    private val context = this@MainActivity as Context
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,16 +49,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun initialize() {
 
-        context = this@MainActivity
-
-        // no action bar // FORSAKEN
-        // init_ActionBar()
+        // init_ActionBar() // no action bar // FORSAKEN
 
         newsList = loadSitesList()
-
         init_webView()
-
-        rvNewsSites.layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
+        rvNewsSites.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         rvNewsSites.adapter = SiteListAdapter(webView,context)
 
     }
@@ -87,6 +82,8 @@ class MainActivity : AppCompatActivity() {
         else super.onBackPressed()
     }
 
+    /*
+    // FORSAKEN CODE //
     private fun init_ActionBar() {
 
         // to FORCE LTR for action bar also !
@@ -111,6 +108,7 @@ class MainActivity : AppCompatActivity() {
         // for check
         Toast.makeText(this@MainActivity,"Hello There !",Toast.LENGTH_LONG).show()
     }
+    */
 
     private fun loadSitesList(): List<SiteItem> {
 
@@ -119,11 +117,11 @@ class MainActivity : AppCompatActivity() {
         return defaultList
 
 
+        // TO ADD LATER //
+
         // first check shared preferences DEFAULT flag (custom made value!)
         // if DEFAULT flag exists , then load the above default list
         // else load shared preferences data !
-
-
     }
 
     private fun getDefaultList(): List<SiteItem> {
@@ -141,7 +139,8 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-class SiteListAdapter(val webView: WebView, val context:Context) : RecyclerView.Adapter<SiteListAdapter.CustomViewHolder>() {
+class SiteListAdapter(private val webView: WebView, private val context:Context)
+    : RecyclerView.Adapter<SiteListAdapter.CustomViewHolder>() {
 
     override fun getItemCount(): Int {
         return newsList.count()+2   //  + 2 , to add Exit & About buttons, at end
