@@ -1,5 +1,8 @@
 package com.iskandar.newscenter
 
+import android.app.Dialog
+import android.content.Context
+import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -21,6 +24,8 @@ import java.net.URL
 import android.os.StrictMode
 import android.webkit.WebViewClient
 import android.graphics.Rect
+import android.support.v7.app.AlertDialog
+import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.widget.ImageButton
@@ -29,6 +34,7 @@ import kotlinx.android.synthetic.main.item_other.view.*
 
 data class SiteItem(val title:String, val url:String, val favIconURL:String)
 lateinit var newsList:List<SiteItem>
+lateinit var context:Context
 
 class MainActivity : AppCompatActivity() {
 
@@ -43,15 +49,18 @@ class MainActivity : AppCompatActivity() {
 
     private fun initialize() {
 
+        context = this@MainActivity
+
         // no action bar // FORSAKEN
         // init_ActionBar()
 
-
         newsList = loadSitesList()
-        rvNewsSites.layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
-        rvNewsSites.adapter = SiteListAdapter()
 
         init_webView()
+
+        rvNewsSites.layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
+        rvNewsSites.adapter = SiteListAdapter(webView,context)
+
     }
 
     private fun init_webView() {
@@ -61,18 +70,21 @@ class MainActivity : AppCompatActivity() {
                 useWideViewPort = true
                 displayZoomControls = true
                 javaScriptEnabled = true
+                domStorageEnabled = true
             }
 
             webViewClient = object : WebViewClient() {
                 override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?) = false
             }
+
             loadUrl(newsList[0].url)
         }
     }
 
 
     override fun onBackPressed() {
-        if(webView.canGoBack()) webView.goBack() else super.onBackPressed()
+        if(webView.canGoBack()) webView.goBack()
+        else super.onBackPressed()
     }
 
     private fun init_ActionBar() {
@@ -120,7 +132,7 @@ class MainActivity : AppCompatActivity() {
 
         tmp.add(SiteItem("موقع PANET","http://m.panet.co.il/",
             "http://www.panet.co.il/apple-touch-icon-144x144.png"))
-        tmp.add(SiteItem("ynet","https://m.ynet.co.il/",
+        tmp.add(SiteItem("ynet","https://www.ynet.co.il/",
             "https://www.ynet.co.il/images/favicon/favicon_1.ico"))
         tmp.add(SiteItem("Reuters","https://mobile.reuters.com/",
             "https://s3.reutersmedia.net/resources_v2/images/favicon/favicon-96x96.png"))
@@ -129,7 +141,7 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-class SiteListAdapter : RecyclerView.Adapter<SiteListAdapter.CustomViewHolder>() {
+class SiteListAdapter(val webView: WebView, val context:Context) : RecyclerView.Adapter<SiteListAdapter.CustomViewHolder>() {
 
     override fun getItemCount(): Int {
         return newsList.count()+2   //  + 2 , to add Exit & About buttons, at end
@@ -158,18 +170,41 @@ class SiteListAdapter : RecyclerView.Adapter<SiteListAdapter.CustomViewHolder>()
             1->{
                 holder.itemView.txtItem.text = newsList[pos].title
                 holder.itemView.imgItem.setImageBitmap(getFavIcon(pos))
+                holder.itemView.setOnClickListener {
+                    webView.loadUrl(newsList[pos].url)
+                }
             }
             else->{
                 when(pos){
                     newsList.count() -> {  // about button
                         holder.itemView.imgOtherButton.setImageResource(R.drawable.ic_info)
+                        holder.itemView.setOnClickListener {
+                            showInfoDialog()
+                        }
                     }
                     newsList.count()+1 -> {  // exit button
                         holder.itemView.imgOtherButton.setImageResource(R.drawable.ic_exit)
+                        holder.itemView.setOnClickListener {
+                            (context as AppCompatActivity).finish()
+                        }
                     }
                 }
             }
         }
+    }
+
+    private fun showInfoDialog() {
+        val alert = AlertDialog.Builder(context)
+            .setIcon(R.drawable.ic_info)
+            .setTitle("News Center")
+            .setMessage("by Iskandar Mazzawi \u00A9")
+            .setPositiveButton("OK", DialogInterface.OnClickListener {
+                dialog, _ -> dialog.dismiss()
+            })
+            .create() as Dialog
+
+        alert.setCanceledOnTouchOutside(false)
+        alert.show()
     }
 
     private fun getFavIcon(pos: Int): Bitmap? {
