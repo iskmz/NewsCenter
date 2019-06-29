@@ -137,9 +137,9 @@ class MainActivity : AppCompatActivity() {
             "https://s3.reutersmedia.net/resources_v2/images/favicon/favicon-96x96.png"))
 
         // some science news sites
-        tmp.add(SiteItem("iflScience","https://www.iflscience.com/",
-            "https://cdn.iflscience.com/favicon.ico?v=1.3.5"))
-        tmp.add(SiteItem("ScienceAlert","https://www.sciencealert.com/",
+        tmp.add(SiteItem("IFL Science","https://www.iflscience.com/",
+            "https://cdn.iflscience.com/assets/site/img/iflscience_logo.png?v=1.3.5"))
+        tmp.add(SiteItem("Science Alert","https://www.sciencealert.com/",
             "https://www.sciencealert.com/apple-icon-180x180.png"))
         tmp.add(SiteItem("Futurism","https://futurism.com/",
             "https://futurism.com/static/favicon.png"))
