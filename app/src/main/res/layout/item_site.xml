@@ -1,0 +1,27 @@
+<RelativeLayout
+        android:layout_width="80dp"
+        android:layout_height="120dp"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/back_item"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <ImageView
+                android:id="@+id/imgItem"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentTop="true"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/ic_blank_site_icon"
+        />
+
+        <TextView
+                android:id="@+id/txtItem"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:layout_below="@id/imgItem"
+                android:layout_width="80dp" android:layout_height="wrap_content" android:maxHeight="60dp"
+                android:textSize="16sp"
+                android:textColor="#ffffff"
+                android:text="this is a check text to see stuff"/>
+
+</RelativeLayout>
