@@ -128,12 +128,21 @@ class MainActivity : AppCompatActivity() {
 
         val tmp = mutableListOf<SiteItem>()
 
+        // basic news sites
         tmp.add(SiteItem("موقع PANET","http://m.panet.co.il/",
             "http://www.panet.co.il/apple-touch-icon-144x144.png"))
-        tmp.add(SiteItem("ynet","https://www.ynet.co.il/",
+        tmp.add(SiteItem("ynet","https://m.ynet.co.il/",
             "https://www.ynet.co.il/images/favicon/favicon_1.ico"))
         tmp.add(SiteItem("Reuters","https://mobile.reuters.com/",
             "https://s3.reutersmedia.net/resources_v2/images/favicon/favicon-96x96.png"))
+
+        // some science news sites
+        tmp.add(SiteItem("iflScience","https://www.iflscience.com/",
+            "https://cdn.iflscience.com/favicon.ico?v=1.3.5"))
+        tmp.add(SiteItem("ScienceAlert","https://www.sciencealert.com/",
+            "https://www.sciencealert.com/apple-icon-180x180.png"))
+        tmp.add(SiteItem("Futurism","https://futurism.com/",
+            "https://futurism.com/static/favicon.png"))
 
         return tmp
     }
