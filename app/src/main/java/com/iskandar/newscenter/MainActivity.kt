@@ -23,8 +23,8 @@ import android.webkit.WebViewClient
 import android.graphics.Rect
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
-
-
+import android.widget.ImageButton
+import kotlinx.android.synthetic.main.item_other.view.*
 
 
 data class SiteItem(val title:String, val url:String, val favIconURL:String)
@@ -50,7 +50,6 @@ class MainActivity : AppCompatActivity() {
         newsList = loadSitesList()
         rvNewsSites.layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
         rvNewsSites.adapter = SiteListAdapter()
-
 
         init_webView()
     }
@@ -116,24 +115,61 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getDefaultList(): List<SiteItem> {
+
         val tmp = mutableListOf<SiteItem>()
-        tmp.add(SiteItem("موقع PANET","http://m.panet.co.il/","http://www.panet.co.il/favicon.ico"))
-        tmp.add(SiteItem("ynet","https://m.ynet.co.il/","https://www.ynet.co.il/images/favicon/favicon_1.ico"))
-        tmp.add(SiteItem("Reuters","https://mobile.reuters.com/","https://s3.reutersmedia.net/resources_v2/images/favicon/favicon-96x96.png"))
+
+        tmp.add(SiteItem("موقع PANET","http://m.panet.co.il/",
+            "http://www.panet.co.il/apple-touch-icon-144x144.png"))
+        tmp.add(SiteItem("ynet","https://m.ynet.co.il/",
+            "https://www.ynet.co.il/images/favicon/favicon_1.ico"))
+        tmp.add(SiteItem("Reuters","https://mobile.reuters.com/",
+            "https://s3.reutersmedia.net/resources_v2/images/favicon/favicon-96x96.png"))
+
         return tmp
     }
 }
 
 class SiteListAdapter : RecyclerView.Adapter<SiteListAdapter.CustomViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, p1: Int): CustomViewHolder {
-        val v = LayoutInflater.from(parent.context).inflate(R.layout.item_site,parent,false)
-        return CustomViewHolder(v)
+    override fun getItemCount(): Int {
+        return newsList.count()+2   //  + 2 , to add Exit & About buttons, at end
+    }
+
+    class CustomViewHolder(v: View) : RecyclerView.ViewHolder(v)
+
+    override fun getItemViewType(position: Int) = when(position){
+        newsList.count(), newsList.count()+1 -> 2
+        else -> 1
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when(viewType) {
+            1 -> {
+                CustomViewHolder(LayoutInflater.from(parent.context).
+                    inflate(R.layout.item_site, parent, false))
+            }
+            else -> {
+                CustomViewHolder(LayoutInflater.from(parent.context).
+                    inflate(R.layout.item_other, parent, false))
+            }
     }
 
     override fun onBindViewHolder(holder: CustomViewHolder, pos: Int) {
-        holder.itemView.txtItem.text = newsList[pos].title
-        holder.itemView.imgItem.setImageBitmap(getFavIcon(pos))
+        when(holder.itemViewType){
+            1->{
+                holder.itemView.txtItem.text = newsList[pos].title
+                holder.itemView.imgItem.setImageBitmap(getFavIcon(pos))
+            }
+            else->{
+                when(pos){
+                    newsList.count() -> {  // about button
+                        holder.itemView.imgOtherButton.setImageResource(R.drawable.ic_info)
+                    }
+                    newsList.count()+1 -> {  // exit button
+                        holder.itemView.imgOtherButton.setImageResource(R.drawable.ic_exit)
+                    }
+                }
+            }
+        }
     }
 
     private fun getFavIcon(pos: Int): Bitmap? {
@@ -144,23 +180,8 @@ class SiteListAdapter : RecyclerView.Adapter<SiteListAdapter.CustomViewHolder>()
         val url = newsList[pos].favIconURL
         val inSt = URL(url).content as InputStream
         val options = BitmapFactory.Options()
-        options.inSampleSize = 4
-        return  inSt.use { BitmapFactory.decodeStream(it,Rect(0,0,80,80),options) }
-           // ?.let { scaleDown(it,0.75f,true) }
+        options.inSampleSize = 2
+        return  inSt.use { BitmapFactory.decodeStream(it,Rect(0,0,40,40),options) }
     }
 
-    private fun scaleDown(realImage: Bitmap, maxImageSize: Float, filter: Boolean): Bitmap {
-        val ratio = Math.min(maxImageSize / realImage.width, maxImageSize / realImage.height)
-        val width = Math.round(ratio * realImage.width)
-        val height = Math.round(ratio * realImage.height)
-        return Bitmap.createScaledBitmap(realImage, width, height, filter)
-    }
-
-
-    override fun getItemCount(): Int {
-        return newsList.count()
-    }
-
-
-    class CustomViewHolder(v: View) : RecyclerView.ViewHolder(v)
 }
