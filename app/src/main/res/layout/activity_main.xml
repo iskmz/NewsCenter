@@ -1,4 +1,4 @@
-<LinearLayout
+<RelativeLayout
         android:layout_height="match_parent"
         android:layout_width="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
         android:orientation="vertical"
@@ -15,6 +15,9 @@
             android:id="@+id/layNewsView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_above="@id/layNewsList"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:orientation="vertical"
             android:background="#000000"
             android:layout_weight="1">
@@ -67,10 +70,13 @@
     <LinearLayout
             android:id="@+id/layNewsList"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:orientation="vertical"
-            android:background="#000000"
-            android:layout_weight="3.5">
+            android:background="#000000">
 
 
         <android.support.v7.widget.RecyclerView
@@ -86,4 +92,4 @@
     </LinearLayout>
 
 
-</LinearLayout>
+</RelativeLayout>
