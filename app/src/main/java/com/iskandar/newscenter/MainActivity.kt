@@ -34,6 +34,7 @@ import kotlinx.android.synthetic.main.item_other.view.*
 
 data class SiteItem(val title:String, val url:String, val favIconURL:String)
 lateinit var newsList:List<SiteItem>
+var firstClick = true
 
 class MainActivity : AppCompatActivity() {
 
@@ -47,6 +48,11 @@ class MainActivity : AppCompatActivity() {
         initialize()
     }
 
+    override fun onResume() {
+        super.onResume()
+        firstClick = true
+    }
+
     private fun initialize() {
 
         // init_ActionBar() // no action bar // FORSAKEN
@@ -54,7 +60,7 @@ class MainActivity : AppCompatActivity() {
         newsList = loadSitesList()
         init_webView()
         rvNewsSites.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        rvNewsSites.adapter = SiteListAdapter(webView,context)
+        rvNewsSites.adapter = SiteListAdapter(context)
 
     }
 
@@ -82,7 +88,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            loadUrl(newsList[0].url)
+            // loadUrl(newsList[0].url) // has issues when loading the first time automatically ! //
         }
     }
 
@@ -154,12 +160,12 @@ class MainActivity : AppCompatActivity() {
         tmp.add(SiteItem("Futurism","https://futurism.com/",
             "https://futurism.com/static/favicon.png"))
 
+
         return tmp
     }
 }
 
-class SiteListAdapter(private val webView: WebView, private val context:Context)
-    : RecyclerView.Adapter<SiteListAdapter.CustomViewHolder>() {
+class SiteListAdapter(private val context:Context) : RecyclerView.Adapter<SiteListAdapter.CustomViewHolder>() {
 
     override fun getItemCount(): Int {
         return newsList.count()+2   //  + 2 , to add Exit & About buttons, at end
@@ -189,7 +195,13 @@ class SiteListAdapter(private val webView: WebView, private val context:Context)
                 holder.itemView.txtItem.text = newsList[pos].title
                 holder.itemView.imgItem.setImageBitmap(getFavIcon(pos))
                 holder.itemView.setOnClickListener {
-                    webView.loadUrl(newsList[pos].url)
+                    val mainAct = context as MainActivity
+                    if(firstClick) {
+                        mainAct.txtWelcome1.visibility = GONE
+                        mainAct.txtWelcome2.visibility = GONE
+                        firstClick = false
+                    }
+                    mainAct.webView.loadUrl(newsList[pos].url)
                 }
             }
             else->{
@@ -203,7 +215,7 @@ class SiteListAdapter(private val webView: WebView, private val context:Context)
                     newsList.count()+1 -> {  // exit button
                         holder.itemView.imgOtherButton.setImageResource(R.drawable.ic_exit)
                         holder.itemView.setOnClickListener {
-                            (context as AppCompatActivity).finish()
+                            (context as MainActivity).finish()
                         }
                     }
                 }
@@ -214,14 +226,19 @@ class SiteListAdapter(private val webView: WebView, private val context:Context)
     private fun showInfoDialog() {
         val alert = AlertDialog.Builder(context)
             .setIcon(R.drawable.ic_info)
-            .setTitle("News Center")
+            .setTitle(" News Center ")
             .setMessage("by Iskandar Mazzawi \u00A9")
-            .setPositiveButton("OK", DialogInterface.OnClickListener {
-                dialog, _ -> dialog.dismiss()
-            })
+            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
             .create() as Dialog
 
         alert.setCanceledOnTouchOutside(false)
+
+        // FORCE LTR direction of alert dialog !! //
+        alert.window?.let{
+            it.decorView.layoutDirection = LAYOUT_DIRECTION_LTR
+            it.decorView.textDirection = LAYOUT_DIRECTION_LTR
+        }
+
         alert.show()
     }
 

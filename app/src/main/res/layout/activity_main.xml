@@ -27,7 +27,7 @@
 
         <com.wang.avi.AVLoadingIndicatorView
                 android:id="@+id/aviProgress"
-                android:visibility="visible"
+                android:visibility="gone"
                 android:layout_gravity="center"
                 android:layout_marginTop="200dp"
                 android:layout_width="150dp"
@@ -36,6 +36,27 @@
                 app:indicatorName="BallTrianglePathIndicator"
                 app:indicatorColor="#FF4003"
         />
+
+
+        <TextView
+                android:id="@+id/txtWelcome1"
+                android:visibility="visible"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="150dp"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:text="WELCOME"/>
+
+        <TextView
+                android:id="@+id/txtWelcome2"
+                android:visibility="visible"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="50dp"
+                android:textSize="24sp"
+                android:textStyle="italic"
+                android:text="click on a button to start ..."/>
 
 
 
