@@ -5,8 +5,6 @@ import android.content.Context
 import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -15,20 +13,17 @@ import kotlinx.android.synthetic.main.activity_main.*
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import kotlinx.android.synthetic.main.action_bar_title.view.*
 import kotlinx.android.synthetic.main.item_site.view.*
 import java.io.InputStream
 import java.net.URL
 import android.os.StrictMode
 import android.webkit.WebViewClient
 import android.graphics.Rect
+import android.net.ConnectivityManager
 import android.support.v7.app.AlertDialog
 import android.view.View.*
-import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
-import android.widget.ImageButton
 import kotlinx.android.synthetic.main.item_other.view.*
 
 
@@ -58,10 +53,27 @@ class MainActivity : AppCompatActivity() {
         // init_ActionBar() // no action bar // FORSAKEN
 
         newsList = loadSitesList()
-        init_webView()
-        rvNewsSites.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        rvNewsSites.adapter = SiteListAdapter(context)
+        if (hasInternet()) {
+            init_webView()
+            rvNewsSites.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            rvNewsSites.adapter = SiteListAdapter(context)
+        }
+        else {
+            showDialogNoInternet()
+        }
+    }
 
+    private fun showDialogNoInternet() {
+        val alert = AlertDialog.Builder(context)
+            .setIcon(R.drawable.ic_warning)
+            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+            .setNegativeButton("Quit App.") { _ , _ -> finish() }
+            .setTitle("NO INTERNET CONNECTION!")
+            .setMessage("Please connect to the Internet and try again ... ")
+            .create()
+
+        alert.setCanceledOnTouchOutside(false)
+        alert.show()
     }
 
     private fun init_webView() {
@@ -162,6 +174,13 @@ class MainActivity : AppCompatActivity() {
 
 
         return tmp
+    }
+
+    private fun hasInternet():Boolean {
+        // if we have internet >> true , otherwise>> false
+        val conMgr = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val netInfo = conMgr.activeNetworkInfo
+        return netInfo != null && netInfo.isConnected
     }
 }
 
