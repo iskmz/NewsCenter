@@ -2,29 +2,29 @@ package com.iskandar.newscenter
 
 import android.app.Dialog
 import android.content.Context
-import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.support.v7.app.AppCompatActivity
+import android.graphics.Rect
+import android.net.ConnectivityManager
 import android.os.Bundle
+import android.os.StrictMode
+import android.support.v7.app.AlertDialog
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import kotlinx.android.synthetic.main.activity_main.*
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.*
 import android.view.ViewGroup
+import android.webkit.WebResourceRequest
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import android.widget.Toast
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.item_other.view.*
 import kotlinx.android.synthetic.main.item_site.view.*
 import java.io.InputStream
 import java.net.URL
-import android.os.StrictMode
-import android.webkit.WebViewClient
-import android.graphics.Rect
-import android.net.ConnectivityManager
-import android.support.v7.app.AlertDialog
-import android.view.View.*
-import android.webkit.WebResourceRequest
-import android.webkit.WebView
-import kotlinx.android.synthetic.main.item_other.view.*
 
 
 data class SiteItem(val title:String, val url:String, val favIconURL:String)
@@ -66,13 +66,38 @@ class MainActivity : AppCompatActivity() {
     private fun showDialogNoInternet() {
         val alert = AlertDialog.Builder(context)
             .setIcon(R.drawable.ic_warning)
-            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+            .setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+                // check again for internet connection
+                if(hasInternet()){
+                    init_webView()
+                    rvNewsSites.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+                    rvNewsSites.adapter = SiteListAdapter(context)
+                }
+                else{
+                    // to FORCE toast direction for LTR always // regardless of user language
+                    val mainAct = context as MainActivity
+                    mainAct.window.decorView.layoutDirection = LAYOUT_DIRECTION_LTR
+                    mainAct.window.decorView.textDirection = TEXT_DIRECTION_LTR
+                    Toast
+                        .makeText(context,"Sorry! \nThe app. needs internet connection to work!",Toast.LENGTH_LONG)
+                        .show()
+                    finish()
+                }
+            }
             .setNegativeButton("Quit App.") { _ , _ -> finish() }
             .setTitle("NO INTERNET CONNECTION!")
-            .setMessage("Please connect to the Internet and try again ... ")
+            .setMessage("Please connect to the Internet then press OK to restart ... ")
             .create()
 
         alert.setCanceledOnTouchOutside(false)
+
+        // FORCE LTR direction of alert dialog !! //
+        alert.window?.let{
+            it.decorView.layoutDirection = LAYOUT_DIRECTION_LTR
+            it.decorView.textDirection = LAYOUT_DIRECTION_LTR
+        }
+
         alert.show()
     }
 
